@@ -2,11 +2,11 @@ def gv
 
 pipeline {
     agent any
-    environement {
+    environment {
         NEW_VERSION = '1.3.0'
         SERVER_CREDENTIALS = credentials('server-credentials')    }
     tools {
-        maven 'Maven'
+        maven : 'Maven'
         //jdk 'jdk-11'
     }
     parameters {
