@@ -88,7 +88,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'server-credentials', passwordVariable: 'PWD', usernameVariable: 'USER')]) {
                     //     echo "username is ${USER}"
                     //     echo "password is ${PASS}"
-                    // }
+                        sh 'echo Deploying to server with user $USER and password $PWD'
+                    }
 
                     // gv.deployApp()
                 }
