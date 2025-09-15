@@ -1,3 +1,5 @@
+def gv
+
 pipeline {
     agent any
 
@@ -13,7 +15,7 @@ pipeline {
 
     parameters {
         // string(name: 'NEW_VERSION', defaultValue: '1.0.0', description: 'new version')
-        // credentials(name: 'SERVER_CREDENTIALS', defaultValue: 'server-credentials', description: 'server credentials')
+        credentials(name: 'SERVER_CREDENTIALS', defaultValue: 'server-credentials', description: 'server credentials')
 
         choice(
             name: 'VERSION',
@@ -33,18 +35,37 @@ pipeline {
             steps {
                 script {
                     echo "initializing..."
+                    gv = load "script.groovy"
                 }
             }
         }
 
-        stage("build") {
+        stage("build jar") {
             steps {
                 script {
-                    echo "building the application..."
-                    // sh 'mvn package'
+                    echo "building jar"
+                    echo "new version is ${NEW_VERSION}"
+                    gv.buildJar()
                 }
             }
         }
+        stage("build image") {
+            steps {
+                script {
+                    echo "building image"
+                    gv.buildImage()
+                }
+            }
+        }
+
+//         stage("build") {
+//             steps {
+//                 script {
+//                     echo "building the application..."
+//                     // sh 'mvn package'
+//                 }
+//             }
+//         }
 
         stage("test") {
             when {
@@ -62,9 +83,9 @@ pipeline {
                 script {
                     echo "deploying"
                     echo "version is ${params.VERSION}"
-                    // echo "server credentials are ${SERVER_CREDENTIALS}"
+                    echo "server credentials are ${SERVER_CREDENTIALS}"
 
-                    // withCredentials([usernamePassword(credentialsId: 'server-credentials', passwordVariable: 'PWD', usernameVariable: 'USER')]) {
+                    withCredentials([usernamePassword(credentialsId: 'server-credentials', passwordVariable: 'PWD', usernameVariable: 'USER')]) {
                     //     echo "username is ${USER}"
                     //     echo "password is ${PASS}"
                     // }
@@ -101,23 +122,7 @@ pipeline {
 //                 }
 //             }
 //         }
-// //         stage("build jar") {
-// //             steps {
-// //                 script {
-// //                     echo "building jar"
-// //                     echo "new version is ${NEW_VERSION}"
-// //                     //gv.buildJar()
-// //                 }
-// //             }
-// //         }
-// //         stage("build image") {
-// //             steps {
-// //                 script {
-// //                     echo "building image"
-// //                     //gv.buildImage()
-// //                 }
-// //             }
-// //         }
+
 //         stage("build") {
 //             steps {
 //                 script {
